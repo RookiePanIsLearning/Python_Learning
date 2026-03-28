@@ -11,6 +11,7 @@
 5. **[函式寫法比較 (def vs lambda)](./05_functions_and_lambda.md)** ✨
 6. 類別與物件導向基礎 (Class & OOP) (施工中...)
 7. **[例外處理語法總結 (try / except)](./06_exceptions.md)** ✨
+8. **[進階例外處理 (raise 與自定義例外)](./07_raise.md)** ✨
 
 ---
 
