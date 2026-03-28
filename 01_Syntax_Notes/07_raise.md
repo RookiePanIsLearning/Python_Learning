@@ -86,6 +86,192 @@ class InvalidAccountError(BankError):
 
 ---
 
+## 🌳 自定義例外如何接枝到繼承樹上
+
+當我們建立自定義例外，就是在 Python 原有的樹上「接枝」，長出新分支。
+
+### 為什麼要先建一個「根節點」？
+
+| 理由 | 說明 |
+|---|---|
+| **隔離業務錯誤** | `except ShopSystemError` 只抓自己系統的錯，不會誤抓 Python 內建的 `TypeError`、`NameError` |
+| **多層精準捕捉** | 上層可以用 `except PaymentError` 抓所有付款錯誤，下層可以針對 `CreditCardExpiredError` 做特定處理 |
+
+### 範例 A：銀行系統（2 層）
+
+```
+Exception
+└── BankError                    ← 專案根節點
+    ├── InsufficientFundsError   ← 餘額不足
+    └── InvalidAccountError      ← 帳號格式錯誤
+```
+
+```python
+class BankError(Exception): pass
+class InsufficientFundsError(BankError): pass
+class InvalidAccountError(BankError): pass
+```
+
+### 範例 B：電商系統（3 層）
+
+```
+Exception
+└── ShopSystemError                    ← 專案根節點
+    ├── OutOfStockError                ← 商品缺貨
+    ├── UserAuthError                  ← 使用者驗證錯誤
+    └── PaymentError                   ← 付款相關（中間分類層）
+        ├── CreditCardExpiredError     ← 信用卡過期
+        └── InsufficientBalanceError   ← 餘額不足
+```
+
+```python
+class ShopSystemError(Exception): pass       # 根節點
+
+class OutOfStockError(ShopSystemError): pass
+class UserAuthError(ShopSystemError): pass
+
+class PaymentError(ShopSystemError): pass    # 中間分類層
+class CreditCardExpiredError(PaymentError): pass
+class InsufficientBalanceError(PaymentError): pass
+```
+
+**捕捉彈性示範 — `except` 就是例外處理的 `elif`：**
+
+多個 `except` 的運作邏輯與 `if...elif...` **幾乎一模一樣**：
+- **由上往下找，先搶先贏**：一旦遇到第一個符合的 `except`，就執行它，後面全部跳過
+- **黃金法則**：「**由小到大，由精準到寬鬆**」— 子類別排在父類別前面
+
+```python
+try:
+    process_payment()
+
+# 🐟 小漁網 A：只抓「餘額不足」
+except InsufficientBalanceError:
+    show_topup_page()
+
+# 🐟 小漁網 B：只抓「信用卡過期」
+except CreditCardExpiredError:
+    show_card_update_page()
+
+# 🦈 中漁網：抓「所有付款問題」（前兩個沒抓到的付款錯誤）
+except PaymentError:
+    show_payment_retry_page()
+
+# 🐳 大漁網：抓「整個電商系統的專屬錯誤」（如缺貨）
+except ShopSystemError:
+    log_error_and_notify_admin()
+
+# 🌊 海綿：抓「所有 Python 內建常規錯誤」（完全沒預料到的錯）
+except Exception:
+    raise   # 未知錯誤往上丟，讓程式崩潰以警示開發者
+```
+
+> ❌ **新手常犯：父類別放前面，子類別永遠不會被執行到**
+>
+> ```python
+> # ⛔ 錯誤示範：父類別放前面
+> except PaymentError:
+>     print("付款發生問題了！")
+> except InsufficientBalanceError:
+>     print("餘額不足！")  # 💀 永遠不會執行到！
+>                          # InsufficientBalanceError 是 PaymentError 子類別
+>                          # 早就被上面攔截了
+> ```
+
+> 💡 **多個錯誤做同樣處理？用 Tuple 合併：**
+>
+> ```python
+> except (InsufficientBalanceError, CreditCardExpiredError) as e:
+>     print(f"付款失敗：{e}")
+>     return_to_home_page()
+> ```
+
+### 🤔 同級例外之間的順序有差嗎？
+
+`InsufficientBalanceError` 和 `CreditCardExpiredError` 同屬 `PaymentError` 的子類別，是「兄弟」關係，**彼此之間沒有繼承關係，先後順序不影響結果**。
+
+```
+PaymentError
+├── InsufficientBalanceError   ← 同級，不會互搶
+└── CreditCardExpiredError     ← 同級，不會互搶
+```
+
+重點在於**要不要區分它們**，依此選擇設計方式：
+
+**① 需要不同處理 → 分開 `except`（順序無所謂）**
+```python
+except InsufficientBalanceError:     # 和下面交換也沒差
+    show_topup_page()
+except CreditCardExpiredError:
+    show_card_update_page()
+```
+
+**② 相同處理但想知道是哪種 → Tuple**
+```python
+except (InsufficientBalanceError, CreditCardExpiredError) as e:
+    print(f"是哪種錯：{type(e).__name__}")
+    show_payment_retry_page()
+```
+
+**③ 完全不在乎細節 → 直接用父類別**
+```python
+except PaymentError:                 # 最簡潔，任何付款錯誤都一視同仁
+    show_payment_retry_page()
+```
+
+| 問題 | 選擇 |
+|---|---|
+| 兩種錯誤要跳到不同頁面？ | ① 分開 `except` |
+| 兩種錯誤行為一樣，但想知道是哪種？ | ② Tuple |
+| 完全不需要區分？ | ③ 父類別 |
+
+
+
+---
+
+## 📁 實務專案結構：`exceptions.py`
+
+當專案變大，把所有自定義例外集中在一個獨立檔案：
+
+```
+shop_system/
+├── main.py          ← 主程式，import exceptions
+├── cart.py          ← 購物車邏輯
+├── payment.py       ← 付款邏輯
+└── exceptions.py    ← 所有自定義例外集中在這裡
+```
+
+**`exceptions.py`:**
+```python
+class ShopSystemError(Exception): pass
+class OutOfStockError(ShopSystemError): pass
+class PaymentError(ShopSystemError): pass
+class CreditCardExpiredError(PaymentError): pass
+class InsufficientBalanceError(PaymentError): pass
+```
+
+**`payment.py`:**
+```python
+from exceptions import PaymentError, InsufficientBalanceError
+
+def process_payment(amount, balance):
+    if amount > balance:
+        raise InsufficientBalanceError(f"餘額不足：需要 {amount}，只有 {balance}")
+```
+
+**`main.py`:**
+```python
+from exceptions import ShopSystemError
+from payment import process_payment
+
+try:
+    process_payment(5000, 1000)
+except ShopSystemError as e:
+    print(f"購物失敗：{e}")
+```
+
+---
+
 ## 🏦 終極整合範例：銀行轉帳系統
 
 將「自定義例外 + raise + try/except 繼承捕捉」全部串在一起：
