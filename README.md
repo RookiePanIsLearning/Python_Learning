@@ -57,4 +57,29 @@ Python_Learning/
   - 實作「測試報告生成器」與「自動化學習儀表板」。
 
 ---
+## 📓 Notebook 學習模式（已啟用）
+
+為了提升互動式學習效率，`02_Exercises` 的前段基礎主題已新增 `.ipynb` 版本，方便你用「分段執行 + 即時觀察輸出」的方式練習：
+
+- `01_basics/01_variables_types.ipynb`
+- `02_flow_control/01_if_else.ipynb`
+- `04_loops/03_list_comprehension.ipynb`
+- `05_functions/01_def_and_scope.ipynb`
+- `06_file_and_exceptions/01_file_io.ipynb`
+- `06_file_and_exceptions/02_try_except.ipynb`
+- `07_oop/01_classes.ipynb`
+- `08_os_sys_automation/01_os_module.ipynb`
+- `09_api_requests/01_get_post.ipynb`
+- `10_scheduling/01_schedule.ipynb`
+
+原本的 `.py` 檔案仍保留，方便你後續做版本比較、命令列執行與測試整合。
+
+建議做法：
+
+- 學習與探索：優先使用 `.ipynb`
+- 測試與自動化（`11_unittest` 之後）：維持 `.py`
+
+每次完成 Notebook 練習後，建議執行一次「Restart Kernel + Run All」，避免隱性狀態造成誤判。
+
+---
 > *Generated efficiently with love and Python. Ready to code!* 🚀
