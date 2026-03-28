@@ -10,7 +10,7 @@
 4. **[進階迴圈與推導式 (Comprehension)](./04_loops_advanced.md)** ✨
 5. **[函式寫法比較 (def vs lambda)](./05_functions_and_lambda.md)** ✨
 6. 類別與物件導向基礎 (Class & OOP) (施工中...)
-7. 檔案讀寫與例外處理 (File I/O & try-except) (施工中...)
+7. **[例外處理語法總結 (try / except)](./06_exceptions.md)** ✨
 
 ---
 
