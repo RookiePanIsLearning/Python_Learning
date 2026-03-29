@@ -97,6 +97,32 @@ except SyntaxError as e:
     print(f"  發生在第 {e.lineno} 行，偏移 {e.offset} 字元")
 ```
 
+> 💡 **小知識：為什麼 `SyntaxError` 在同一段程式碼裡救不了？**
+>
+> Python 執行程式分為兩個階段：
+>
+> ```
+> 階段 1：編譯（Compile）  →  先把整個 .py 檔解析成 bytecode
+> 階段 2：執行（Execute）  →  才真正跑起來，try/except 在這階段才有作用
+> ```
+>
+> `SyntaxError` 發生在**階段 1**，`try/except` 還沒跑到，根本攔不住。
+>
+> **唯一的辦法**是用 `compile()` 或 `eval()` 把「別人的程式碼」當字串傳入，  
+> 因為 `compile()` 本身是在**執行階段**才去解析那個字串：
+>
+> ```python
+> # .py 檔本身語法正確 → 順利進入執行階段
+> bad_code = "def foo(\n    pass"   # 這只是個字串，Python 不在乎
+>
+> try:
+>     compile(bad_code, "<使用者輸入>", "exec")  # 執行階段才解析字串 → 丟出 SyntaxError
+> except SyntaxError as e:
+>     print(f"攔到了！錯在第 {e.lineno} 行：{e.msg}")   # ✅ 可以攔截
+> ```
+>
+> 實際應用場景：線上程式碼編輯器（Jupyter / Replit）、讀取 `.py` 格式的設定檔語法驗證等。
+
 ### ⚠️ IndentationError — 縮排錯誤（SyntaxError 子類別）
 
 ```python
