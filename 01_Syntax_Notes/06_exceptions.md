@@ -17,6 +17,28 @@ finally:
 
 > **白話文**：`try` = 嘗試；`except` = 出事了就跑這裡；`else` = 沒事才跑這裡；`finally` = 不管有沒有事都跑這裡。
 
+### 🗺️ 執行流程圖
+
+```mermaid
+flowchart TD
+    A([▶ 開始執行]) --> B
+
+    B["🔵 try 區塊\n執行可能出錯的程式碼"]
+
+    B -->|"✅ 沒有發生例外"| C
+    B -->|"💥 發生例外"| D
+
+    C["🟢 else 區塊\n只在完全沒有例外時執行"]
+    D["🔴 except 區塊\n捕捉例外，處理錯誤"]
+
+    C --> E
+    D --> E
+
+    E["🟡 finally 區塊\n無論如何都會執行\n（常用於關閉資源）"]
+
+    E --> F([⏹ 結束])
+```
+
 ---
 
 ## 🌳 完整繼承樹（真實 Python 結構）
@@ -96,6 +118,32 @@ except SyntaxError as e:
     print(f"[SyntaxError] {e}")
     print(f"  發生在第 {e.lineno} 行，偏移 {e.offset} 字元")
 ```
+
+> 💡 **小知識：為什麼 `SyntaxError` 在同一段程式碼裡救不了？**
+>
+> Python 執行程式分為兩個階段：
+>
+> ```
+> 階段 1：編譯（Compile）  →  先把整個 .py 檔解析成 bytecode
+> 階段 2：執行（Execute）  →  才真正跑起來，try/except 在這階段才有作用
+> ```
+>
+> `SyntaxError` 發生在**階段 1**，`try/except` 還沒跑到，根本攔不住。
+>
+> **唯一的辦法**是用 `compile()` 或 `eval()` 把「別人的程式碼」當字串傳入，  
+> 因為 `compile()` 本身是在**執行階段**才去解析那個字串：
+>
+> ```python
+> # .py 檔本身語法正確 → 順利進入執行階段
+> bad_code = "def foo(\n    pass"   # 這只是個字串，Python 不在乎
+>
+> try:
+>     compile(bad_code, "<使用者輸入>", "exec")  # 執行階段才解析字串 → 丟出 SyntaxError
+> except SyntaxError as e:
+>     print(f"攔到了！錯在第 {e.lineno} 行：{e.msg}")   # ✅ 可以攔截
+> ```
+>
+> 實際應用場景：線上程式碼編輯器（Jupyter / Replit）、讀取 `.py` 格式的設定檔語法驗證等。
 
 ### ⚠️ IndentationError — 縮排錯誤（SyntaxError 子類別）
 
