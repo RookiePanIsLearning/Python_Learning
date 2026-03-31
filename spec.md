@@ -55,6 +55,8 @@ Python_Learning/
 ### 🟨 階段二：進階程式設計與物件導向 (週次 4-6)
 *目標：掌握可重複使用的程式碼架構與模組化開發。*
 * [x] 模組 4：函式定義與匿名函式 (def, args/kwargs, lambda, scope)
+* [ ] 模組 1-2：語法糖綜合 (解包, 推導式性能, 海象運算子, match-case, f-string 進階)
+* [ ] 模組 4-2：裝飾器 (Decorator, @語法, functools.wraps, 上下文管理器)
 * [ ] 模組 5：檔案與例外處理 (txt/csv 讀寫, log 記錄, try/except)
 * [ ] 模組 6：物件導向程式設計 (Class, Object, 繼承, 多型)
 

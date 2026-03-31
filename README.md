@@ -63,8 +63,10 @@ Python_Learning/
 
 - `01_basics/01_variables_types.ipynb`
 - `02_flow_control/01_if_else.ipynb`
+- `03_syntax_sugar/01_syntax_sugar.ipynb`
 - `04_loops/03_list_comprehension.ipynb`
 - `05_functions/01_def_and_scope.ipynb`
+- `05_functions/02_decorators.ipynb`
 - `06_file_and_exceptions/01_file_io.ipynb`
 - `06_file_and_exceptions/02_try_except.ipynb`
 - `07_oop/01_classes.ipynb`
