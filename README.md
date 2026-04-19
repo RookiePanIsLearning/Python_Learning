@@ -1,6 +1,8 @@
-# [View Dashboard — index.html](./index.html)
-
 # 🐍 PeterPan's Python Learning Journey (QA & Automation Focus)
+
+---
+Learning Python [Python Notes](https://rookiepanislearning.github.io/Python_Learning/) 
+---
 
 這是我專屬的 Python 學習紀錄區。這個專案的目標是透過**「做中學 (Active Learning)」**與**「產出導向 (Project-Based)」**，在 16 週內從零開始掌握 Python 自動化腳本開發與軟體測試框架 (QA)。
 
