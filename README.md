@@ -1,3 +1,5 @@
+# [View Dashboard — index.html](./index.html)
+
 # 🐍 PeterPan's Python Learning Journey (QA & Automation Focus)
 
 這是我專屬的 Python 學習紀錄區。這個專案的目標是透過**「做中學 (Active Learning)」**與**「產出導向 (Project-Based)」**，在 16 週內從零開始掌握 Python 自動化腳本開發與軟體測試框架 (QA)。
@@ -84,4 +86,43 @@ Python_Learning/
 每次完成 Notebook 練習後，建議執行一次「Restart Kernel + Run All」，避免隱性狀態造成誤判。
 
 ---
+
+## 🔧 Git 常用命令流程
+
+以下是一些常用的 Git 命令流程，方便快速提醒自己：
+
+### 初始化倉庫
+```bash
+git init                    # 初始化本地倉庫
+git remote add origin <url> # 添加遠端倉庫
+```
+
+### 日常工作流程
+```bash
+git status                  # 查看當前狀態
+git add .                   # 添加所有更改到暫存區
+git add <file>              # 添加特定文件
+git commit -m "message"     # 提交更改
+git push origin main        # 推送到遠端主分支
+git pull origin main        # 從遠端拉取最新更改
+```
+
+### 分支管理
+```bash
+git branch                  # 查看所有分支
+git branch <name>           # 創建新分支
+git checkout <name>         # 切換到分支
+git checkout -b <name>      # 創建並切換到新分支
+git merge <branch>          # 合併分支到當前分支
+```
+
+### 其他實用命令
+```bash
+git log                     # 查看提交歷史
+git diff                    # 查看更改差異
+git reset --hard HEAD~1     # 回退到上一個提交
+git stash                   # 暫存當前更改
+git stash pop               # 恢復暫存的更改
+```
+
 > *Generated efficiently with love and Python. Ready to code!* 🚀
